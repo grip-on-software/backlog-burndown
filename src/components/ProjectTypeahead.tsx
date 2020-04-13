@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Project, projectSelector, updateProject } from '../slices/project'; 
 import { fetchProjects, projectsSelector } from '../slices/projects';
 
-import Form from 'react-bootstrap/Form';
+import { Col, Form, Row, Spinner } from 'react-bootstrap';
 import { Highlighter, Typeahead, TypeaheadMenuProps, TypeaheadResult } from 'react-bootstrap-typeahead';
 
 interface Props {
@@ -35,14 +35,21 @@ const ProjectTypeahead = (props: Props) => {
     <div className={props.className || ""}>
       <Form>
         <Form.Group controlId="projectKey">
-          <Typeahead
-            bsSize="large"
-            id="projectKey"
-            labelKey="key"
-            options={projects}
-            onChange={selected => selected.length ? dispatch(updateProject(selected[0])) : null}
-            placeholder="Find a project..."
-            renderMenuItemChildren={renderMenuItem} />
+          <Row>
+            <Col>
+              <Typeahead
+                bsSize="large"
+                id="projectKey"
+                labelKey="key"
+                options={projects}
+                onChange={selected => selected.length ? dispatch(updateProject(selected[0])) : null}
+                placeholder="Find a project..."
+                renderMenuItemChildren={renderMenuItem} />
+              </Col>
+              <Col className={`${isLoading ? "d-flex" : "d-none"} align-items-center pl-0`} xs="auto">
+                <Spinner animation="border" variant="primary" />
+              </Col>
+            </Row>
         </Form.Group>
       </Form>
       <h6 className="text-muted card-subtitle mb-2">
