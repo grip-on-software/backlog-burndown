@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import BurndownChart from './BurndownChart';
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
 import { alertsSelector, deleteAlert } from '../slices/alerts';
@@ -38,6 +39,8 @@ const App = () => {
           <Card className="mb-4">
             <Card.Body>
               <ProjectTypeahead className="mb-5" />
+              <BurndownChart className="mb-3" height={448} />
+              <BurndownChart className="mb-3" height={64} />
             </Card.Body>
             <Card.Footer>
               <Form>
