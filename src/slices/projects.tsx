@@ -42,9 +42,9 @@ export const fetchProjects = () => {
     try {
       const response = await fetch("data/projects.json");
       const data = await response.json();
-      dispatch(getProjectsSuccess(data))
+      dispatch(getProjectsSuccess(data));
     } catch (error) {
-      dispatch(getProjectsFailure())
+      dispatch(getProjectsFailure());
     }
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
 import ProjectTypeahead from './ProjectTypeahead';
+import ReleaseTypeahead from './ReleaseTypeahead';
 
 const App = () => {
   return (
@@ -14,7 +15,7 @@ const App = () => {
         <Col>
           <Card className="mb-4">
             <Card.Body>
-              <ProjectTypeahead />
+              <ProjectTypeahead className="mb-5" />
             </Card.Body>
             <Card.Footer>
               <Form>
@@ -44,7 +45,7 @@ const App = () => {
               <Card.Body>
                 <Tab.Content>
                   <Tab.Pane eventKey="filter">
-                    
+                    <ReleaseTypeahead />
                   </Tab.Pane>
                   <Tab.Pane eventKey="forecast">
                     

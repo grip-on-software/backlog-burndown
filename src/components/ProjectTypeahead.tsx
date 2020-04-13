@@ -17,7 +17,7 @@ const ProjectTypeahead = (props: Props) => {
   const { hasErrors, isLoading, projects } = useSelector(projectsSelector);
 
   useEffect(() => {
-    dispatch(fetchProjects())
+    dispatch(fetchProjects());
   }, [dispatch]);
 
   const renderMenuItem = (project: TypeaheadResult<Project>, props: TypeaheadMenuProps<Project>, idx: number) => {
