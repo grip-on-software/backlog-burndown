@@ -22,13 +22,12 @@ const ProjectTypeahead = (props: Props) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (hasErrors) {
-      dispatch(addAlert({
-        dismissible: false,
-        message: "Something went wrong while fetching projects. Please reload the page.",
-        variant: "danger"
-      }));
-    }
+    if (!hasErrors) return;
+    dispatch(addAlert({
+      dismissible: false,
+      message: "Something went wrong while fetching projects. Please reload the page.",
+      variant: "danger"
+    }));
   }, [dispatch, hasErrors]);
 
   const renderMenuItem = (project: TypeaheadResult<Project>, props: TypeaheadMenuProps<Project>, idx: number) => {

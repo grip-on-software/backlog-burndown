@@ -20,19 +20,19 @@ const projectsSlice = createSlice({
     getProjects: state => {
       state.isLoading = true
     },
+    getProjectsFailure: state => {
+      state.isLoading = false
+      state.hasErrors = true
+    },
     getProjectsSuccess: (state, { payload }) => {
       state.hasErrors = false
       state.isLoading = false
       state.projects = payload
-    },
-    getProjectsFailure: state => {
-      state.isLoading = false
-      state.hasErrors = true
     }
   },
 });
 
-export const { getProjects, getProjectsSuccess, getProjectsFailure } = projectsSlice.actions;
+export const { getProjects, getProjectsFailure, getProjectsSuccess } = projectsSlice.actions;
 export const projectsSelector = (state: any) => state.projects as State;
 export default projectsSlice.reducer;
 

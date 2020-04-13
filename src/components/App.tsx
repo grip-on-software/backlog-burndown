@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import BurndownChart from './BurndownChart';
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
 import { alertsSelector, deleteAlert } from '../slices/alerts';
+import { fetchStacks } from '../slices/stacks';
+import { projectSelector } from '../slices/project';
 
 import { Alert, Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
 
 const App = () => {
   const dispatch = useDispatch();
   const { alerts } = useSelector(alertsSelector);
+  const { project } = useSelector(projectSelector);
+
+  useEffect(() => {
+    if (!project) return;
+    dispatch(fetchStacks(project.key));
+  }, [dispatch, project]);
 
   return (
     <Container>
