@@ -1,13 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
-import { alertsSelector } from '../slices/alerts';
+import { alertsSelector, deleteAlert } from '../slices/alerts';
 
 import { Alert, Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
 
 const App = () => {
+  const dispatch = useDispatch();
   const { alerts } = useSelector(alertsSelector);
 
   return (
@@ -20,7 +21,15 @@ const App = () => {
       <Row>
         <Col>
           {
-            alerts.map((alert, idx) => <Alert key={idx} variant={alert.type} dismissible={alert.dismissible}>{alert.message}</Alert>)
+            alerts.map((alert, idx) => 
+              <Alert
+                dismissible={alert.dismissible}
+                key={idx}
+                onClose={() => dispatch(deleteAlert(idx))}
+                variant={alert.variant}>
+                  {alert.message}
+              </Alert>
+            )
           }
         </Col>
       </Row>

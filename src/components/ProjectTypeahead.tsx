@@ -26,7 +26,7 @@ const ProjectTypeahead = (props: Props) => {
       dispatch(addAlert({
         dismissible: false,
         message: "Something went wrong while fetching projects. Please reload the page.",
-        type: "danger"
+        variant: "danger"
       }));
     }
   }, [dispatch, hasErrors]);
@@ -45,12 +45,12 @@ const ProjectTypeahead = (props: Props) => {
   return (
     <div className={props.className || ""}>
       <Form>
-        <Form.Group controlId="projectKey">
+        <Form.Group controlId="project">
           <Row>
             <Col>
               <Typeahead
-                bsSize="large"
-                id="projectKey"
+                bsSize="lg"
+                id="project"
                 labelKey="key"
                 options={projects}
                 onChange={selected => selected.length ? dispatch(updateProject(selected[0])) : null}
