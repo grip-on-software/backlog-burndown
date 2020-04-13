@@ -1,14 +1,27 @@
 import React from 'react';
-import { Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
+import { alertsSelector } from '../slices/alerts';
+
+import { Alert, Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
 
 const App = () => {
+  const { alerts } = useSelector(alertsSelector);
+
   return (
     <Container>
       <Row>
         <Col>
           <h2 className="my-4">Backlog Burndown Chart</h2>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          {
+            alerts.map((alert, idx) => <Alert key={idx} variant={alert.type} dismissible={alert.dismissible}>{alert.message}</Alert>)
+          }
         </Col>
       </Row>
       <Row>

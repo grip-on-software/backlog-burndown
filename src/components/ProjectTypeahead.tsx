@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { addAlert } from '../slices/alerts';
 import { Project, projectSelector, updateProject } from '../slices/project'; 
 import { fetchProjects, projectsSelector } from '../slices/projects';
 
@@ -19,6 +20,16 @@ const ProjectTypeahead = (props: Props) => {
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (hasErrors) {
+      dispatch(addAlert({
+        dismissible: false,
+        message: "Something went wrong while fetching projects. Please reload the page.",
+        type: "danger"
+      }));
+    }
+  }, [dispatch, hasErrors]);
 
   const renderMenuItem = (project: TypeaheadResult<Project>, props: TypeaheadMenuProps<Project>, idx: number) => {
     return(

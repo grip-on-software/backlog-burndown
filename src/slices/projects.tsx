@@ -40,10 +40,11 @@ export const fetchProjects = () => {
   return async (dispatch: Dispatch) => {
     dispatch(getProjects());
     try {
-      const response = await fetch("data/projects.json");
+      const response = await fetch("data/projcts.json");
       const data = await response.json();
       dispatch(getProjectsSuccess(data));
     } catch (error) {
+      console.error(error);
       dispatch(getProjectsFailure());
     }
   }
