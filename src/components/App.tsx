@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
+import ProjectTypeahead from './ProjectTypeahead';
 
 const App = () => {
   return (
@@ -13,7 +14,7 @@ const App = () => {
         <Col>
           <Card className="mb-4">
             <Card.Body>
-              
+              <ProjectTypeahead />
             </Card.Body>
             <Card.Footer>
               <Form>
