@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { MouseEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import BurndownChart from './BurndownChart';
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
 import { alertsSelector, deleteAlert } from '../slices/alerts';
+import { burndownSelector, toggleAlign } from '../slices/burndown';
 import { fetchStacks } from '../slices/stacks';
 import { projectSelector } from '../slices/project';
 
@@ -14,6 +15,7 @@ const App = () => {
   const dispatch = useDispatch();
   const { alerts } = useSelector(alertsSelector);
   const { project } = useSelector(projectSelector);
+  const { isAligned } = useSelector(burndownSelector);
 
   useEffect(() => {
     if (!project) return;
@@ -52,7 +54,12 @@ const App = () => {
             </Card.Body>
             <Card.Footer>
               <Form>
-                <Form.Check id="align" type="switch" label="Align sprints with the base of the chart"/>
+                <Form.Check
+                  id="align"
+                  defaultChecked={isAligned}
+                  label="Align sprints with the base of the chart"
+                  onClick={(event: MouseEvent<HTMLInputElement>) => dispatch(toggleAlign(event.currentTarget.checked))}
+                  type="switch" />
               </Form>
             </Card.Footer>
           </Card>
