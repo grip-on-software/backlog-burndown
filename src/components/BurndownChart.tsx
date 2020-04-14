@@ -4,6 +4,12 @@ import { Figure } from "react-bootstrap";
 interface Props {
   className?: string,
   height: number
+  margin?: {
+    bottom?: number,
+    left?: number,
+    right?: number,
+    top?: number,
+  }
 }
 
 const BurndownChart = (props: Props) => {
