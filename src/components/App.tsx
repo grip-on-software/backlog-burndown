@@ -1,6 +1,7 @@
-import React, { MouseEvent, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import BrushChart from './BrushChart';
 import BurndownChart from './BurndownChart';
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
@@ -49,8 +50,8 @@ const App = () => {
           <Card className="mb-4">
             <Card.Body>
               <ProjectTypeahead className="mb-5" />
-              <BurndownChart className="mb-3" height={448} />
-              <BurndownChart className="mb-3" height={64} />
+              <BurndownChart className="mb-3" height={448} margin={{top: 10, right: 10, bottom: 10, left: 20}} />
+              <BrushChart className="mb-3" height={64} />
             </Card.Body>
             <Card.Footer>
               <Form>
@@ -58,7 +59,7 @@ const App = () => {
                   id="align"
                   defaultChecked={isAligned}
                   label="Align sprints with the base of the chart"
-                  onClick={(event: MouseEvent<HTMLInputElement>) => dispatch(toggleAlign(event.currentTarget.checked))}
+                  onClick={() => dispatch(toggleAlign())}
                   type="switch" />
               </Form>
             </Card.Footer>

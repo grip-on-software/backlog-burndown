@@ -1,2 +1,74 @@
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
+
+$added: #985b67;
+$completed: #90ee90;
+$discarded: #86d899;
+$reestimatedHigher: #787d95;
+$reestimatedLower: #7cc1a0;
+$remaining: #71aca5;
+$unestimated: #6d95a4;
+
+.chart-burndown .domain {
+  display: none;
+}
+
+.bar {
+  opacity: 0.75;
+}
+
+.added .bar {
+  fill: $added;
+}
+
+.added .bar.forecast {
+  fill: grayscale($color: $added)
+}
+
+.completed .bar {
+  fill: $completed;
+}
+
+.completed .bar.forecast {
+  fill: grayscale($color: $completed)
+}
+
+.discarded .bar {
+  fill: $discarded;
+}
+
+.discarded .bar.forecast {
+  fill: grayscale($color: $discarded)
+}
+
+.reestimatedHigher .bar {
+  fill: $reestimatedHigher;
+}
+
+.reestimatedHigher .bar.forecast {
+  fill: grayscale($color: $reestimatedHigher)
+}
+
+.reestimatedLower .bar {
+  fill: $reestimatedLower;
+}
+
+.reestimatedLower .bar.forecast {
+  fill: grayscale($color: $reestimatedLower)
+}
+
+.remaining .bar {
+  fill: $remaining;
+}
+
+.remaining .bar.forecast {
+  fill: grayscale($color: $remaining)
+}
+
+.unestimated .bar {
+  fill: $unestimated;
+}
+
+.unestimated .bar.forecast {
+  fill: grayscale($color: $unestimated)
+}

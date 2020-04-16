@@ -34,7 +34,7 @@ const BrushChart = (props: Props) => {
 
   return (
     <Figure ref={container} className={`${props.className} figure-img d-block`}>
-      <svg ref={svg} height={props.height} width={width} viewBox={`0 0 ${width} ${props.height}`}>
+      <svg className="chart chart-brush" ref={svg} height={props.height} width={width} viewBox={`0 0 ${width} ${props.height}`}>
         <g className="axes">
           <g className="x-axis"></g>
         </g>

@@ -39,8 +39,8 @@ const initialState: State = {
   stacks: []
 };
 
-const chartsSlice = createSlice({
-  name: "charts",
+const stacksSlice = createSlice({
+  name: "stacks",
   initialState,
   reducers: {
     getStacks: state => {
@@ -58,9 +58,9 @@ const chartsSlice = createSlice({
   },
 });
 
-export const { getStacks, getStacksFailure, getStacksSuccess } = chartsSlice.actions;
-export const chartsSelector = (state: any) => state.charts as State;
-export default chartsSlice.reducer;
+export const { getStacks, getStacksFailure, getStacksSuccess } = stacksSlice.actions;
+export const stacksSelector = (state: any) => state.stacks as State;
+export default stacksSlice.reducer;
 
 export const fetchStacks = (projectKey: string) => {
   return async (dispatch: Dispatch) => {
