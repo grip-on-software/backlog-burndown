@@ -1,4 +1,4 @@
-import { Selection, axisBottom, axisLeft, max, min, scaleLinear, scaleTime, select, stack, stackOffsetNone, Transition, mean } from 'd3';
+import { Selection, axisBottom, axisLeft, max, min, scaleLinear, scaleTime, select, stack, stackOffsetNone, Transition } from 'd3';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -71,7 +71,7 @@ const BurndownChart = (props: Props) => {
   const { isAligned, range } = useSelector(burndownSelector);
   const { stacks } = useSelector(stacksSelector);
   const bounds = stacks.length
-    ? [new Date(stacks[0].timeFrame.startTime), new Date(stacks[stacks.length-1].timeFrame.endTime)]
+    ? [stacks[0].timeFrame.startTime, stacks[stacks.length-1].timeFrame.endTime]
     : [0,0];
   
   const series = useMemo(() => {
@@ -91,14 +91,14 @@ const BurndownChart = (props: Props) => {
           ? [
               (s => 
                 (min(s[0].filter((e, i) =>
-                  stacks[i].timeFrame.endTime > range[0].getTime() &&
-                  stacks[i].timeFrame.startTime < range[1].getTime()),
+                  stacks[i].timeFrame.endTime > range[0] &&
+                  stacks[i].timeFrame.startTime < range[1]),
                   d => d[0]) || 0)
               )(series),
               (s => 
                 (max(s[series.length-1].filter((e, i) => 
-                  stacks[i].timeFrame.endTime > range[0].getTime() &&
-                  stacks[i].timeFrame.startTime < range[1].getTime()),
+                  stacks[i].timeFrame.endTime > range[0] &&
+                  stacks[i].timeFrame.startTime < range[1]),
                   d => d[0]) || 0)
               )(series)
             ]

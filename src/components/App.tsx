@@ -51,7 +51,7 @@ const App = () => {
             <Card.Body>
               <ProjectTypeahead className="mb-5" />
               <BurndownChart className="mb-3" height={448} margin={{top: 10, right: 10, bottom: 10, left: 20}} />
-              <BrushChart className="mb-3" height={64} />
+              <BrushChart className="mb-3" height={64} margin={{bottom: 16}} />
             </Card.Body>
             <Card.Footer>
               <Form>

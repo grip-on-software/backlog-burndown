@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 interface State {
   isAligned: boolean,
-  range: [Date, Date] | null
+  range: [number, number] | null
 }
 
 const initialState: State = {

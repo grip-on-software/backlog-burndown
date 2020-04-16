@@ -1,5 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { axisBottom, brushX, event, scaleTime, select, Selection, Transition } from 'd3';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Figure } from "react-bootstrap";
+import { useDispatch, useSelector } from 'react-redux';
+
+import { burndownSelector, updateRange } from '../slices/burndown';
+import { stacksSelector } from '../slices/stacks';
 
 interface Props {
   className?: string,
@@ -31,6 +36,73 @@ const BrushChart = (props: Props) => {
     setWidth(container.current!.offsetWidth);
     window.addEventListener("resize", handleResize);
   }, [handleResize]);
+
+  // Define scales, axes, and draw chart.
+  const dispatch = useDispatch();
+  const { range } = useSelector(burndownSelector);
+  const { stacks } = useSelector(stacksSelector);
+  const bounds = stacks.length
+    ? [stacks[0].timeFrame.startTime, stacks[stacks.length-1].timeFrame.endTime]
+    : [0,0];
+
+  const scale = {
+    x: useMemo(() => scaleTime()
+      .domain(bounds)
+      .rangeRound([props.margin?.left || 0, width - (props.margin?.right || 0)]),
+    [bounds, props.margin, width]),
+  };
+
+  const axis = {
+    x: useMemo(() => (g: Transition<SVGGElement, unknown, null, undefined>) => g
+        .attr("transform", `translate(0,${props.height - (props.margin?.bottom || 0)})`)
+        .call(g => g
+          .call(axisBottom(scale.x)
+            .ticks(width / props.height)
+            .tickSize(-props.height + (props.margin?.top || 0) + (props.margin?.bottom || 0)))
+          .call(g => g.selectAll(".domain")
+            .attr("fill", "#ddd")
+            .attr("stroke", null))
+          .call(g => g.selectAll(".tick line")
+            .attr("stroke", "#fff")
+            .attr("stroke-opacity", 0.5))),
+      [props.height, props.margin, scale.x, width]),
+  };
+
+  const handleBrush = useCallback(() => {
+    if (!stacks.length) return;
+    try {
+      const region = (event.selection as [number, number]).map(r => scale.x.invert(r).getTime());
+      if (range && range[0] === region[0] && range[1] === region[1]) return;
+      dispatch(updateRange(region));
+    } catch (error) {
+      dispatch(updateRange(null));
+    }
+  }, [dispatch, range, scale, stacks]);
+
+  const brush = useMemo(() => brushX()
+    .extent([
+      [(props.margin?.left || 0), (props.margin?.top || 0)],
+      [width - (props.margin?.right || 0), props.height - (props.margin?.bottom || 0)]
+    ])
+    .on("end", handleBrush),
+  [handleBrush, props.height, props.margin, width]);
+
+  // Update chart.
+  useEffect(() => {
+    if (!svg.current) return;
+    const chart = select(svg.current);
+
+    // Update axes.
+    (chart.select(".x-axis") as Selection<SVGGElement, unknown, null, undefined>)
+      .transition()
+      .duration(250)
+      .call(axis.x);
+
+    // Redraw brush.
+    (chart.select(".brush") as Selection<SVGGElement, unknown, null, undefined>)
+      .call(brush)
+      .call(brush.move, range ? range.map(r => scale.x(r)) : null);
+  }, [axis, brush, range, scale]);
 
   return (
     <Figure ref={container} className={`${props.className} figure-img d-block`}>
