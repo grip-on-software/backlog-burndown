@@ -1,11 +1,10 @@
-import { Selection, axisBottom, axisLeft, max, min, scaleLinear, scaleTime, select, stack, stackOffsetNone, Transition } from 'd3';
+import { Selection, Transition, axisBottom, axisLeft, max, mean, min, scaleLinear, scaleTime, select, stack, stackOffsetNone, sum } from 'd3';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-
-import { burndownSelector } from "../slices/burndown";
-import { stacksSelector } from '../slices/stacks';
-
 import { Figure } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+
+import { Stack, configSelector, setBounds } from "../slices/config";
+
 
 interface Props {
   className?: string,
@@ -68,18 +67,54 @@ const BurndownChart = (props: Props) => {
     window.addEventListener("resize", handleResize);
   }, [handleResize]);
 
-  const { isAligned, range } = useSelector(burndownSelector);
-  const { stacks } = useSelector(stacksSelector);
-  const bounds = stacks.length
-    ? [stacks[0].timeFrame.startTime, stacks[stacks.length-1].timeFrame.endTime]
-    : [0,0];
+  // Specify data, scales, axes, and draw chart.
+  const dispatch = useDispatch();
+  const { bounds, estimate, forecast, isAligned, pastStacks, range, simulatedStacks } = useSelector(configSelector);
   
+  const estimatedStacks = useMemo(() => {
+    let stacks: Stack[] = [];
+    if (!pastStacks.length) return stacks;
+    let period: number = mean(pastStacks, s => s.timeFrame.endTime - s.timeFrame.startTime) || 0;
+    let remaining: number = pastStacks[pastStacks.length-1].bars.remaining;
+    let netPoints = sum(Object.values(estimate));
+    for (let i = 0; i < 50 && estimate.remaining >= 0; i++) {
+      stacks.push({
+        timeFrame: {
+          label: `Estimated sprint ${i+1}`,
+          startTime: pastStacks[pastStacks.length-1].timeFrame.endTime + i * period,
+          endTime: pastStacks[pastStacks.length-1].timeFrame.endTime + (i+1) * period,
+          forecast: true,
+        },
+        bars: { ...estimate, remaining: remaining }
+      } as Stack);
+      remaining = Math.max(0, remaining + netPoints);
+    }
+    return stacks;
+  }, [estimate, pastStacks]);
+
+  const stacks = useMemo(() => {
+    switch (forecast) {
+      case "off":
+        return pastStacks;
+      case "estimate":
+        return pastStacks.concat(estimatedStacks);
+      case "simulation":
+        return pastStacks.concat(simulatedStacks);
+    }
+  }, [estimatedStacks, forecast, pastStacks, simulatedStacks]);
+
   const series = useMemo(() => {
     return stack()
       .keys(features.keys)
       .offset((s, o) => isAligned ? stackOffsetNone(s,o) : stackOffsetBurndown(s,o))
       (stacks.map(stack => stack.bars))
   }, [isAligned, stacks]);
+  
+  useEffect(() => {
+    stacks.length
+      ? dispatch(setBounds([stacks[0].timeFrame.startTime, stacks[stacks.length-1].timeFrame.endTime]))
+      : dispatch(setBounds([0,0]));
+  }, [dispatch, stacks]);
 
   const scale = {
     x: useMemo(() => scaleTime()

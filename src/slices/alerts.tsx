@@ -18,10 +18,10 @@ const alertsSlice = createSlice({
   name: "alerts",
   initialState,
   reducers: {
-    addAlert: (state, { payload }) => {
+    addAlert: (state: State, { payload }: { payload: Alert }) => {
       state.alerts.unshift(payload)
     },
-    deleteAlert: (state, { payload }) => {
+    deleteAlert: (state: State, { payload }: { payload: number} ) => {
       state.alerts.splice(payload, 1);
     },
   },

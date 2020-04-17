@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Figure } from "react-bootstrap";
 import { useDispatch, useSelector } from 'react-redux';
 
-import { burndownSelector, updateRange } from '../slices/burndown';
-import { stacksSelector } from '../slices/stacks';
+import { configSelector, setRange } from '../slices/config';
 
 interface Props {
   className?: string,
@@ -39,11 +38,7 @@ const BrushChart = (props: Props) => {
 
   // Define scales, axes, and draw chart.
   const dispatch = useDispatch();
-  const { range } = useSelector(burndownSelector);
-  const { stacks } = useSelector(stacksSelector);
-  const bounds = stacks.length
-    ? [stacks[0].timeFrame.startTime, stacks[stacks.length-1].timeFrame.endTime]
-    : [0,0];
+  const { bounds, project, range } = useSelector(configSelector);
 
   const scale = {
     x: useMemo(() => scaleTime()
@@ -69,15 +64,15 @@ const BrushChart = (props: Props) => {
   };
 
   const handleBrush = useCallback(() => {
-    if (!stacks.length) return;
+    if (!project) return;
     try {
-      const region = (event.selection as [number, number]).map(r => scale.x.invert(r).getTime());
+      const region: [number, number] = event.selection.map((r: number) => scale.x.invert(r).getTime());
       if (range && range[0] === region[0] && range[1] === region[1]) return;
-      dispatch(updateRange(region));
+      dispatch(setRange(region));
     } catch (error) {
-      dispatch(updateRange(null));
+      if (range) dispatch(setRange(null));
     }
-  }, [dispatch, range, scale, stacks]);
+  }, [dispatch, project, range, scale]);
 
   const brush = useMemo(() => brushX()
     .extent([

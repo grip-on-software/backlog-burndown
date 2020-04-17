@@ -1,22 +1,19 @@
 import React, { useEffect } from 'react';
+import { Alert, Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import BrushChart from './BrushChart';
 import BurndownChart from './BurndownChart';
+import ForecastPicker from './ForecastPicker';
 import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
 import { alertsSelector, deleteAlert } from '../slices/alerts';
-import { burndownSelector, toggleAlign } from '../slices/burndown';
-import { fetchStacks } from '../slices/stacks';
-import { projectSelector } from '../slices/project';
-
-import { Alert, Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
+import { configSelector, fetchStacks, toggleAlign } from '../slices/config';
 
 const App = () => {
   const dispatch = useDispatch();
   const { alerts } = useSelector(alertsSelector);
-  const { project } = useSelector(projectSelector);
-  const { isAligned } = useSelector(burndownSelector);
+  const { isAligned, project } = useSelector(configSelector);
 
   useEffect(() => {
     if (!project) return;
@@ -89,7 +86,7 @@ const App = () => {
                     <ReleaseTypeahead />
                   </Tab.Pane>
                   <Tab.Pane eventKey="forecast">
-                    
+                    <ForecastPicker />
                     <Collapse>
                       <Card className="mb-3">
                         <Card.Body>

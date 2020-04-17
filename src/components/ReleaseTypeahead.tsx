@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { projectSelector } from '../slices/project'; 
-import { releasesSelector, resetReleases, updateReleases } from '../slices/releases';
+import { configSelector, resetReleases, setReleases } from '../slices/config';
 
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -13,8 +12,7 @@ interface Props {
 
 const ReleaseTypeahead = (props: Props) => {
   const dispatch = useDispatch();
-  const { project } = useSelector(projectSelector);
-  const { releases } = useSelector(releasesSelector);
+  const { project, releases } = useSelector(configSelector);
 
   useEffect(() => {
     dispatch(resetReleases());
@@ -29,7 +27,7 @@ const ReleaseTypeahead = (props: Props) => {
         id="releases"
         labelKey="name"
         multiple
-        onChange={releases => dispatch(updateReleases(releases))}
+        onChange={releases => dispatch(setReleases(releases))}
         options={project ? project.releases : []}
         placeholder="Click or start typing release..."
         selected={releases} />
