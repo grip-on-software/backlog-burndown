@@ -96,8 +96,14 @@ const BrushChart = (props: Props) => {
     // Redraw brush.
     (chart.select(".brush") as Selection<SVGGElement, unknown, null, undefined>)
       .call(brush)
-      .call(brush.move, range ? range.map(r => scale.x(r)) : null);
-  }, [axis, brush, range, scale]);
+      .call(brush.move, range 
+        ? [
+            scale.x(Math.max(bounds[0], range[0])),
+            scale.x(Math.min(range[1], bounds[1]))
+          ]
+        : null
+      );
+  }, [axis, bounds, brush, range, scale]);
 
   return (
     <Figure ref={container} className={`${props.className} figure-img d-block`}>

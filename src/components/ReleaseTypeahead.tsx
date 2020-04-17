@@ -15,8 +15,9 @@ const ReleaseTypeahead = (props: Props) => {
   const { project, releases } = useSelector(configSelector);
 
   useEffect(() => {
+    if (!releases.length) return;
     dispatch(resetReleases());
-  }, [dispatch, project]);
+  }, [dispatch, project, releases]);
 
   return (
     <Form.Group className={props.className} controlId="releases">
