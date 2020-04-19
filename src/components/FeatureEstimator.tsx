@@ -1,11 +1,11 @@
 import { mean } from 'd3';
-import React, { Dispatch, SetStateAction, useEffect, useMemo, useState, useRef } from 'react';
+import React from 'react';
 import { Button, Card, Collapse, Form, InputGroup } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Estimate, addEstimate, configSelector } from '../slices/config';
+import { Estimates, addEstimate, configSelector } from '../slices/config';
 
-const features: Estimate = {
+const features = {
   added: "Added work",
   completed: "Completed work",
   discarded: "Discarded work",
@@ -19,29 +19,19 @@ const FeatureEstimator = () => {
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     const target = event.target as HTMLInputElement;
     dispatch(addEstimate({
-      feature: target.dataset["feature"] as keyof Estimate,
+      feature: target.dataset["feature"] as keyof Estimates,
       estimate: target.value
     }));
   }
   
   const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const target = event.target as HTMLButtonElement;
-    const feature = target.dataset["feature"] as keyof Estimate;
+    const feature = target.dataset["feature"] as keyof Estimates;
     dispatch(addEstimate({
       feature: feature,
-      estimate: parseFloat((mean(pastStacks.slice(-3), s => s.bars[feature]) || 0).toFixed(1)).toString()
+      estimate: mean(pastStacks.slice(-3), s => s.bars[feature]) || 0
     }));
   }
-
-  // const initialEstimate = useMemo(() => {
-  //   if (undefined === props.stacks) return 0;
-  //   return mean(props.stacks.slice(-3).map(s => s.bars[props.feature]));
-  // }, [props.feature, props.stacks]);
-
-  // useEffect(() => {
-  //   if (null === estimate.current || undefined === initialEstimate) return;
-  //   (estimate.current! as HTMLInputElement).value = initialEstimate.toString();
-  // }, [initialEstimate]);
 
   const dispatch = useDispatch();
   const { estimate, forecast, pastStacks } = useSelector(configSelector);
@@ -57,12 +47,12 @@ const FeatureEstimator = () => {
                 <InputGroup>
                   <Form.Control
                     data-feature={feature[0]}
-                    isInvalid={isNaN(parseFloat(estimate[feature[0] as keyof Estimate]))}
+                    isInvalid={isNaN(parseFloat(estimate[feature[0] as keyof Estimates].input))}
                     min={0}
                     onChange={handleChange}
                     type="number"
                     step="any"
-                    value={estimate[feature[0] as keyof Estimate]} />
+                    value={estimate[feature[0] as keyof Estimates].input} />
                   <InputGroup.Append>
                     <Button
                       className="border"

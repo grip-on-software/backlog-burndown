@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Figure } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Estimate, Stack, configSelector, setBounds, setEstimate } from "../slices/config";
+import { Estimates, Stack, configSelector, setBounds, addEstimate } from "../slices/config";
 
 
 interface Props {
@@ -62,13 +62,13 @@ const BurndownChart = (props: Props) => {
   
   useEffect(() => {
     if (!pastStacks.length) return;
-    dispatch(setEstimate(
-      Object.fromEntries(
-        features.map(f => 
-          [f, parseFloat((mean(pastStacks.slice(-3), s => s.bars[f]) || 0).toFixed(1)).toString()]
-        )
-      ) as unknown as Estimate
-    ));
+    features.forEach(f => {
+      if ("remaining" === f) return;
+      dispatch(addEstimate({
+        feature: f as keyof Estimates,
+        estimate: mean(pastStacks.slice(-3), s => s.bars[f]) || 0
+      }));
+    });
   }, [dispatch, pastStacks]);
 
   const estimatedStacks = useMemo(() => {
@@ -76,8 +76,9 @@ const BurndownChart = (props: Props) => {
     if (!pastStacks.length) return stacks;
     let period: number = mean(pastStacks, s => s.timeFrame.endTime - s.timeFrame.startTime) || 0;
     let remaining: number = pastStacks[pastStacks.length-1].bars.remaining;
-    let netPoints = sum(Object.entries(estimate).filter(e => features.slice(0,2).includes(e[0])), e => e[1]) -
-      sum(Object.entries(estimate).filter(e => features.slice(-3).includes(e[0])), e => e[1]);
+    console.log(estimate);
+    let netPoints = sum([estimate.added.numeric, estimate.reestimatedHigher.numeric, estimate.unestimated.numeric]) - 
+      sum([estimate.reestimatedLower.numeric, estimate.discarded.numeric, estimate.completed.numeric]);
     for (let i = 0; i < 50 && remaining > 0; ++i) {
       stacks.push({
         timeFrame: {
@@ -89,7 +90,7 @@ const BurndownChart = (props: Props) => {
         bars: {
           ...Object.fromEntries(
             Object.entries(estimate).map(e =>
-              [e[0], parseFloat(e[1]) || 0]
+              [e[0], e[1].numeric]
             )
           ),
           remaining: remaining

@@ -41,18 +41,23 @@ export interface Stack {
   bars: Bars,
 };
 
-export interface Estimate {
-  added: string,
-  completed: string,
-  discarded: string,
-  reestimatedHigher: string,
-  reestimatedLower: string,
-  unestimated: string,
+interface Estimate {
+  input: string,
+  numeric: number
+}
+
+export interface Estimates {
+  added: Estimate,
+  completed: Estimate,
+  discarded: Estimate,
+  reestimatedHigher: Estimate,
+  reestimatedLower: Estimate,
+  unestimated: Estimate,
 }
 
 interface State {
   bounds: [number, number],
-  estimate: Estimate,
+  estimate: Estimates,
   forecast: "off" | "estimate" | "simulation",
   isAligned: boolean,
   pastStacks: Stack[],
@@ -66,12 +71,30 @@ interface State {
 const initialState: State = {
   bounds: [0,0],
   estimate: {
-    added: "0",
-    completed: "0",
-    discarded: "0",
-    reestimatedHigher: "0",
-    reestimatedLower: "0",
-    unestimated: "0",
+    added: {
+      input: "0",
+      numeric: 0
+    },
+    completed: {
+      input: "0",
+      numeric: 0
+    },
+    discarded: {
+      input: "0",
+      numeric: 0
+    },
+    reestimatedHigher: {
+      input: "0",
+      numeric: 0
+    },
+    reestimatedLower: {
+      input: "0",
+      numeric: 0
+    },
+    unestimated: {
+      input: "0",
+      numeric: 0
+    },
   },
   forecast: "off",
   isAligned: false,
@@ -87,17 +110,25 @@ const configSlice = createSlice({
   name: "config",
   initialState,
   reducers: {
-    addEstimate: (state: State, { payload }: { payload: { feature: "added" | "completed" | "discarded" | "reestimatedHigher" | "reestimatedLower" |  "unestimated", estimate: string } }) => {
-      state.estimate[payload.feature] = payload.estimate;
+    addEstimate: (state: State, { payload }: { payload: { feature: keyof Estimates, estimate: number | string } }) => {
+      console.log(payload);
+      if (typeof payload.estimate === "number" && ! isNaN(payload.estimate)) {
+        state.estimate[payload.feature] = {
+          input: parseFloat(payload.estimate.toFixed(1)).toString(),
+          numeric: payload.estimate
+        }
+      } else if (typeof payload.estimate === "string") {
+        const numericEstimate = parseFloat(payload.estimate);
+        state.estimate[payload.feature].input = payload.estimate;
+        if (isNaN(numericEstimate)) return;
+        state.estimate[payload.feature].numeric = numericEstimate;
+      }
     },
     resetReleases: (state: State) => {
       state.releases = []
     },
     setBounds: (state: State, { payload }: { payload: [number, number] }) => {
       state.bounds = payload;
-    },
-    setEstimate: (state: State, { payload }: { payload: Estimate }) => {
-      state.estimate = payload;
     },
     setForecast: (state: State, { payload }: { payload: "off" | "estimate" | "simulation" }) => {
       state.forecast = payload;
@@ -126,7 +157,7 @@ const configSlice = createSlice({
   },
 });
 
-export const { addEstimate, resetReleases, setBounds, setEstimate, setForecast, setPastStacks, setProject, setProjects, setRange, setReleases, setSimulatedStacks, toggleAlign } = configSlice.actions;
+export const { addEstimate, resetReleases, setBounds, setForecast, setPastStacks, setProject, setProjects, setRange, setReleases, setSimulatedStacks, toggleAlign } = configSlice.actions;
 export const configSelector = (state: any) => state.config as State;
 export default configSlice.reducer;
 
