@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Figure } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Stack, configSelector, setBounds } from "../slices/config";
+import { Estimate, Stack, configSelector, setBounds, setEstimate } from "../slices/config";
 
 
 interface Props {
@@ -17,18 +17,7 @@ interface Props {
   }
 }
 
-const features = {
-  keys: ["added", "reestimatedHigher", "unestimated", "remaining", "reestimatedLower", "discarded", "completed"],
-  labels: {
-    added: "Added work",
-    completed: "Completed work",
-    discarded: "Discarded work",
-    reestimatedHigher: "Work reestimated higher",
-    reestimatedLower: "Work reestimated lower",
-    remaining: "Remaining work",
-    unestimated: "Unestimated work",
-  }
-};
+const features = ["added", "reestimatedHigher", "unestimated", "remaining", "reestimatedLower", "discarded", "completed"];
 
 const stackOffsetBurndown = (s: any[], o: number[]) => {
   for (let i = 0; i < s.length; ++i) {
@@ -71,13 +60,25 @@ const BurndownChart = (props: Props) => {
   const dispatch = useDispatch();
   const { bounds, estimate, forecast, isAligned, pastStacks, range, simulatedStacks } = useSelector(configSelector);
   
+  useEffect(() => {
+    if (!pastStacks.length) return;
+    dispatch(setEstimate(
+      Object.fromEntries(
+        features.map(f => 
+          [f, parseFloat((mean(pastStacks.slice(-3), s => s.bars[f]) || 0).toFixed(1)).toString()]
+        )
+      ) as unknown as Estimate
+    ));
+  }, [dispatch, pastStacks]);
+
   const estimatedStacks = useMemo(() => {
     let stacks: Stack[] = [];
     if (!pastStacks.length) return stacks;
     let period: number = mean(pastStacks, s => s.timeFrame.endTime - s.timeFrame.startTime) || 0;
     let remaining: number = pastStacks[pastStacks.length-1].bars.remaining;
-    let netPoints = sum(Object.values(estimate));
-    for (let i = 0; i < 50 && estimate.remaining >= 0; i++) {
+    let netPoints = sum(Object.entries(estimate).filter(e => features.slice(0,2).includes(e[0])), e => e[1]) -
+      sum(Object.entries(estimate).filter(e => features.slice(-3).includes(e[0])), e => e[1]);
+    for (let i = 0; i < 50 && remaining > 0; ++i) {
       stacks.push({
         timeFrame: {
           label: `Estimated sprint ${i+1}`,
@@ -85,7 +86,14 @@ const BurndownChart = (props: Props) => {
           endTime: pastStacks[pastStacks.length-1].timeFrame.endTime + (i+1) * period,
           forecast: true,
         },
-        bars: { ...estimate, remaining: remaining }
+        bars: {
+          ...Object.fromEntries(
+            Object.entries(estimate).map(e =>
+              [e[0], parseFloat(e[1]) || 0]
+            )
+          ),
+          remaining: remaining
+        }
       } as Stack);
       remaining = Math.max(0, remaining + netPoints);
     }
@@ -105,7 +113,7 @@ const BurndownChart = (props: Props) => {
 
   const series = useMemo(() => {
     return stack()
-      .keys(features.keys)
+      .keys(features)
       .offset((s, o) => isAligned ? stackOffsetNone(s,o) : stackOffsetBurndown(s,o))
       (stacks.map(stack => stack.bars))
   }, [isAligned, stacks]);

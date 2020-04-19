@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Alert, Card, Col, Collapse, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
+import { Alert, Card, Col, Container, Form, Nav, Row, Tab } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 import BrushChart from './BrushChart';
@@ -9,6 +9,7 @@ import ProjectTypeahead from './ProjectTypeahead';
 import ReleaseTypeahead from './ReleaseTypeahead';
 import { alertsSelector, deleteAlert } from '../slices/alerts';
 import { configSelector, fetchStacks, toggleAlign } from '../slices/config';
+import FeatureEstimator from './FeatureEstimator';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -87,13 +88,7 @@ const App = () => {
                   </Tab.Pane>
                   <Tab.Pane eventKey="forecast">
                     <ForecastPicker />
-                    <Collapse>
-                      <Card className="mb-3">
-                        <Card.Body>
-
-                        </Card.Body>
-                      </Card>
-                    </Collapse>
+                    <FeatureEstimator />
                   </Tab.Pane>
                   <Tab.Pane eventKey="issues"></Tab.Pane>
                 </Tab.Content>

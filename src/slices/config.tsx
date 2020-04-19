@@ -41,9 +41,18 @@ export interface Stack {
   bars: Bars,
 };
 
+export interface Estimate {
+  added: string,
+  completed: string,
+  discarded: string,
+  reestimatedHigher: string,
+  reestimatedLower: string,
+  unestimated: string,
+}
+
 interface State {
   bounds: [number, number],
-  estimate: Bars,
+  estimate: Estimate,
   forecast: "off" | "estimate" | "simulation",
   isAligned: boolean,
   pastStacks: Stack[],
@@ -57,13 +66,12 @@ interface State {
 const initialState: State = {
   bounds: [0,0],
   estimate: {
-    added: 0,
-    completed: 0,
-    discarded: 0,
-    reestimatedHigher: 0,
-    reestimatedLower: 0,
-    remaining: 0,
-    unestimated: 0,
+    added: "0",
+    completed: "0",
+    discarded: "0",
+    reestimatedHigher: "0",
+    reestimatedLower: "0",
+    unestimated: "0",
   },
   forecast: "off",
   isAligned: false,
@@ -79,7 +87,7 @@ const configSlice = createSlice({
   name: "config",
   initialState,
   reducers: {
-    addEstimate: (state: State, { payload }: { payload: { feature: "added" | "completed" | "discarded" | "reestimatedHigher" | "reestimatedLower" |  "unestimated", estimate: number } }) => {
+    addEstimate: (state: State, { payload }: { payload: { feature: "added" | "completed" | "discarded" | "reestimatedHigher" | "reestimatedLower" |  "unestimated", estimate: string } }) => {
       state.estimate[payload.feature] = payload.estimate;
     },
     resetReleases: (state: State) => {
@@ -87,6 +95,9 @@ const configSlice = createSlice({
     },
     setBounds: (state: State, { payload }: { payload: [number, number] }) => {
       state.bounds = payload;
+    },
+    setEstimate: (state: State, { payload }: { payload: Estimate }) => {
+      state.estimate = payload;
     },
     setForecast: (state: State, { payload }: { payload: "off" | "estimate" | "simulation" }) => {
       state.forecast = payload;
@@ -115,7 +126,7 @@ const configSlice = createSlice({
   },
 });
 
-export const { addEstimate, resetReleases, setBounds, setForecast, setPastStacks, setProject, setProjects, setRange, setReleases, setSimulatedStacks, toggleAlign } = configSlice.actions;
+export const { addEstimate, resetReleases, setBounds, setEstimate, setForecast, setPastStacks, setProject, setProjects, setRange, setReleases, setSimulatedStacks, toggleAlign } = configSlice.actions;
 export const configSelector = (state: any) => state.config as State;
 export default configSlice.reducer;
 
