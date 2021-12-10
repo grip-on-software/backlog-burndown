@@ -9,6 +9,15 @@ $reestimatedLower: #7cc1a0;
 $remaining: #71aca5;
 $unestimated: #6d95a4;
 
+.legend {
+  padding-left: 0;
+}
+
+.legend li {
+  display: inline-block;
+  margin-right: 15px;
+}
+
 .chart-burndown .domain {
   display: none;
 }
@@ -17,7 +26,7 @@ $unestimated: #6d95a4;
   opacity: 0.75;
 }
 
-.added .bar {
+.added path, .added .bar {
   fill: $added;
 }
 
@@ -25,7 +34,7 @@ $unestimated: #6d95a4;
   fill: grayscale($color: $added)
 }
 
-.completed .bar {
+.completed path, .completed .bar {
   fill: $completed;
 }
 
@@ -33,7 +42,7 @@ $unestimated: #6d95a4;
   fill: grayscale($color: $completed)
 }
 
-.discarded .bar {
+.discarded path, .discarded .bar {
   fill: $discarded;
 }
 
@@ -41,7 +50,7 @@ $unestimated: #6d95a4;
   fill: grayscale($color: $discarded)
 }
 
-.reestimatedHigher .bar {
+.reestimatedHigher path, .reestimatedHigher .bar {
   fill: $reestimatedHigher;
 }
 
@@ -49,7 +58,7 @@ $unestimated: #6d95a4;
   fill: grayscale($color: $reestimatedHigher)
 }
 
-.reestimatedLower .bar {
+.reestimatedLower path, .reestimatedLower .bar {
   fill: $reestimatedLower;
 }
 
@@ -57,7 +66,7 @@ $unestimated: #6d95a4;
   fill: grayscale($color: $reestimatedLower)
 }
 
-.remaining .bar {
+.remaining path, .remaining .bar {
   fill: $remaining;
 }
 
@@ -65,7 +74,7 @@ $unestimated: #6d95a4;
   fill: grayscale($color: $remaining)
 }
 
-.unestimated .bar {
+.unestimated path, .unestimated .bar {
   fill: $unestimated;
 }
 

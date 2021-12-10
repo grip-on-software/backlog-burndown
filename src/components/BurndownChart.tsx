@@ -1,6 +1,8 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquare } from '@fortawesome/free-solid-svg-icons';
 import { Selection, Transition, axisBottom, axisLeft, max, mean, min, scaleLinear, scaleTime, select, stack, stackOffsetNone, sum } from 'd3';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Figure } from "react-bootstrap";
+import { Col, Figure, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Estimates, Stack, configSelector, setBounds, addEstimate } from "../slices/config";
@@ -201,15 +203,30 @@ const BurndownChart = (props: Props) => {
   }, [axis, scale, series, stacks]);
 
   return (
-    <Figure ref={container} className={`${props.className} figure-img d-block`}>
-      <svg className="chart chart-burndown" ref={svg} height={props.height} width={width} viewBox={`0 0 ${width} ${props.height}`}>
-        <g className="axes">
-          <g className="x-axis"></g>
-          <g className="y-axis"></g>
-        </g>
-        <g className="bars"></g>
-      </svg>
-    </Figure>
+    <>
+      <Row>
+        <Col>
+          <ul className="legend small">
+            <li><FontAwesomeIcon icon={faSquare} className="added mr-1" />Added work</li>
+            <li><FontAwesomeIcon icon={faSquare} className="reestimatedHigher mr-1" />Work reestimated higher</li>
+            <li><FontAwesomeIcon icon={faSquare} className="unestimated mr-1" />Unestimated work</li>
+            <li><FontAwesomeIcon icon={faSquare} className="remaining mr-1" />Remaining work</li>
+            <li><FontAwesomeIcon icon={faSquare} className="reestimatedLower mr-1" />Work reestimated lower</li>
+            <li><FontAwesomeIcon icon={faSquare} className="discarded mr-1" />Discarded work</li>
+            <li><FontAwesomeIcon icon={faSquare} className="completed mr-1" />Completed work</li>
+          </ul>
+        </Col>
+      </Row>
+      <Figure ref={container} className={`${props.className} figure-img d-block`}>
+        <svg className="chart chart-burndown" ref={svg} height={props.height} width={width} viewBox={`0 0 ${width} ${props.height}`}>
+          <g className="axes">
+            <g className="x-axis"></g>
+            <g className="y-axis"></g>
+          </g>
+          <g className="bars"></g>
+        </svg>
+      </Figure>
+    </>
   );
 };
 
